@@ -69,18 +69,25 @@ A corporate-style operator that prioritizes capacity, infrastructure, and safe i
 7. Earn revenue, pay maintenance, and continue through five seasons.
 8. Finish with the highest final score.
 
-## Hosting
+## How to Run the Game
 
-This game is designed to run directly in the browser. No install is required.
+Coaster Capital is a single-file browser game. You do not need to install anything or download extra software.
 
-To host it with GitHub Pages:
+To play it:
 
-1. Save the game file as `index.html`.
-2. Upload it to a GitHub repository.
-3. Open the repository settings.
-4. Go to **Pages**.
-5. Deploy from the `main` branch.
-6. Share the generated GitHub Pages link.
+1. Download or copy the game file.
+2. Make sure the file is named:
+
+   `index.html`
+
+3. Open the file on your computer.
+4. Double-click `index.html`.
+5. The game should open in your default web browser.
+6. Press **Start Game**, choose a difficulty, and begin playing.
+
+If double-clicking does not work, right-click the file and choose **Open with**, then select a browser like Chrome, Edge, Firefox, or Safari.
+
+Because the game is built with HTML, CSS, and JavaScript, it runs directly in the browser without needing an internet connection after the file is saved.
 
 ## Project Goal
 
