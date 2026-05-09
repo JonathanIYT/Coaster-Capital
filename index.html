@@ -393,6 +393,15 @@
     .card.family .cardInner { background: linear-gradient(180deg, #d6f2b1, #6cae64 56%, #254c34); }
     .card.food .cardInner { background: linear-gradient(180deg, #ffe3a0, #d68a36 56%, #66371e); }
     .card.upgrade .cardInner { background: linear-gradient(180deg, #d3d9e8, #747e9d 56%, #2a3149); }
+    .card.legend .cardInner {
+      background: linear-gradient(180deg, #fff1a8, #d59a2f 52%, #5d3217);
+      border-color: rgba(255, 239, 167, .78);
+      box-shadow: inset 0 0 0 5px rgba(92, 49, 18, .26), 0 0 26px rgba(255, 210, 95, .34);
+    }
+    .card.legend .cardTop,
+    .card.legend .cardBottom {
+      background: rgba(75, 39, 11, .52);
+    }
 
     .cardTop {
       height: 28px;
@@ -803,7 +812,7 @@
         <div id="winConfetti" aria-hidden="true"></div>
         <div class="resultsBox">
           <h1 style="font-size:clamp(36px,6vw,76px);">Season Closed</h1>
-          <p class="subtitle" id="finalStory">The lights settle over the midway.</p>
+          <p class="subtitle" id="finalStory">The lights settle over JonathanIYT World.</p>
           <div class="ranking" id="ranking"></div>
           <div class="buttonRow">
             <button id="restartBtn">Play Again</button>
@@ -816,7 +825,7 @@
       <div class="titleCard">
         <div class="titleInner">
           <h1>Coaster Capital</h1>
-          <p class="subtitle">A card game where you bid against rival park operators, buy coasters, attractions, food stands, and upgrades, then build the richest park before the final season closes.</p>
+          <p class="subtitle">A 3D-style browser card game where you bid against rival park operators, buy coasters, attractions, food stands, and upgrades, then build the richest park before the final season closes.</p>
           <div class="pillRow">
             <div class="pill">3 AI opponents</div>
             <div class="pill">5 operating seasons</div>
@@ -824,7 +833,7 @@
             <div class="pill">Coasters, dark rides, food, and upgrades</div>
           </div>
           <div class="ruleGrid">
-            <div class="ruleBox"><strong>1. Buy attractions for JonathanIYT World.</strong>Each season has three auction lots. Bid carefully because cash is also part of your final score.</div>
+            <div class="ruleBox"><strong>1. Build JonathanIYT World.</strong>Each season has three auction lots. Bid carefully because cash is also part of your final score.</div>
             <div class="ruleBox"><strong>2. Match the crowd.</strong>Events favor different stats: thrill, nostalgia, capacity, theme, or food.</div>
             <div class="ruleBox"><strong>3. Pay the upkeep.</strong>Big rides score huge, but maintenance can chew through your budget like an old lift chain.</div>
           </div>
@@ -937,11 +946,13 @@
         { name: "Mystic Mill Chute", year: 2026, type: "water", rarity: "New Build", min: 8, maint: 5, stats: { thrill: 7, nostalgia: 3, capacity: 8, theme: 9, food: 0 }, flavor: "A modern splash ride wrapped in old millwork, storm lanterns, and theatrical mist." },
         { name: "Cinder Creek BBQ", year: 2026, type: "food", rarity: "New Food", min: 5, maint: 2, stats: { thrill: 2, nostalgia: 3, capacity: 8, theme: 8, food: 10 }, flavor: "The sort of restaurant expansion that quietly fixes guest satisfaction by dinner." },
         { name: "Lost Frontier Railroad", year: 1948, type: "family", rarity: "Transport", min: 6, maint: 4, stats: { thrill: 2, nostalgia: 10, capacity: 10, theme: 9, food: 0 }, flavor: "A steam train that makes the whole park feel connected, even when it is barely moving." },
-        { name: "Thunderhead Revival", year: 2026, type: "coaster", rarity: "Restoration", min: 9, maint: 4, stats: { thrill: 8, nostalgia: 9, capacity: 8, theme: 7, food: 0 }, flavor: "A restored wooden coaster with new track, old soul, and a station full of second chances." }
+        { name: "Thunderhead Revival", year: 2026, type: "coaster", rarity: "Restoration", min: 9, maint: 4, stats: { thrill: 8, nostalgia: 9, capacity: 8, theme: 7, food: 0 }, flavor: "A restored wooden coaster with new track, old soul, and a station full of second chances." },
+        { name: "Golden Comet", year: 1928, type: "coaster", rarity: "Legend", legend: true, min: 11, maint: 5, stats: { thrill: 8, nostalgia: 12, capacity: 7, theme: 9, food: 0 }, flavor: "A legendary wooden coaster with massive nostalgia and a legacy that grows every season.", ability: "Legend: +6 legacy at the end of each season you own it." },
+        { name: "The Lost Mill", year: 1971, type: "dark", rarity: "Legend", legend: true, bonusTypes: ["historic"], min: 10, maint: 4, stats: { thrill: 5, nostalgia: 11, capacity: 7, theme: 12, food: 0 }, flavor: "A vanished mill dark ride rediscovered in the trees, still turning stories into revenue.", ability: "Legend: Counts as both a Dark Ride and a Historic card for bonuses." }
       ];
 
       const eventLibrary = [
-        { name: "Summer Heat Wave", type: "Weather", text: "Guests chase shade, water, and high-capacity relief from the midway pavement.", weights: { thrill: 1, nostalgia: 1, capacity: 2, theme: 2, food: 0 }, bonuses: { water: 8, food: 6, upgrade: 3 } },
+        { name: "Summer Heat Wave", type: "Weather", text: "Guests chase shade, water, and high-capacity relief from the pavement.", weights: { thrill: 1, nostalgia: 1, capacity: 2, theme: 2, food: 0 }, bonuses: { water: 8, food: 6, upgrade: 3 } },
         { name: "Coaster Enthusiast Weekend", type: "Crowd", text: "The lot fills with tripods, vintage shirts, and people who know manufacturer histories by heart.", weights: { thrill: 3, nostalgia: 2, capacity: 2, theme: 1, food: 0 }, bonuses: { coaster: 8 } },
         { name: "Haunt Season", type: "Seasonal", text: "Fog rolls across the walkways and the park earns its money after sunset.", weights: { thrill: 2, nostalgia: 2, capacity: 1, theme: 3, food: 0 }, bonuses: { dark: 8, food: 2 } },
         { name: "Family Vacation Boom", type: "Crowd", text: "The best attraction is the one everyone can agree on before the kids get tired.", weights: { thrill: 1, nostalgia: 2, capacity: 3, theme: 2, food: 0 }, bonuses: { family: 6, water: 3, food: 2 } },
@@ -950,7 +961,7 @@
         { name: "Viral POV Video", type: "Media", text: "A single clip turns one attraction into the ride everyone talks about first.", weights: { thrill: 3, nostalgia: 1, capacity: 2, theme: 2, food: 0 }, bonuses: { coaster: 7, dark: 3 } },
         { name: "Heritage Weekend", type: "History", text: "Guests arrive for old names, old paint, old stories, and the feeling that the park kept its promise.", weights: { thrill: 1, nostalgia: 3, capacity: 2, theme: 2, food: 0 }, bonuses: { family: 5, coaster: 3, dark: 3, food: 2 } },
         { name: "Corporate Buyout Rumor", type: "Pressure", text: "The crowd turns emotional. Every beloved ride suddenly matters more than the balance sheet.", weights: { thrill: 1, nostalgia: 3, capacity: 2, theme: 3, food: 0 }, bonuses: { upgrade: 2, family: 4, food: 2 } },
-        { name: "Opening Day Crush", type: "Operations", text: "Capacity decides whether the midway feels exciting or impossible.", weights: { thrill: 1, nostalgia: 1, capacity: 3, theme: 2, food: 0 }, bonuses: { upgrade: 6, food: 4 } }
+        { name: "Opening Day Crush", type: "Operations", text: "Capacity decides whether the park feels exciting or impossible.", weights: { thrill: 1, nostalgia: 1, capacity: 3, theme: 2, food: 0 }, bonuses: { upgrade: 6, food: 4 } }
       ];
 
       const state = {
@@ -1296,6 +1307,7 @@
           card.maint * .75;
 
         if (ai.persona.includes("Thrill") && card.type === "coaster") value += 3.5;
+        if (card.legend) value += 7;
         if (ai.persona.includes("Nostalgia") && card.year < 1980) value += 3;
         if (ai.persona.includes("Capacity") && s.capacity >= 8) value += 3;
         if (card.type === "food" && ai.persona.includes("Capacity")) value += 1.5;
@@ -1317,22 +1329,51 @@
         renderAll();
       }
 
+      function eventStatBlock(event) {
+        const focus = Object.entries(event.weights || {})
+          .filter(([, value]) => value > 0)
+          .map(([stat, value]) => `${statNames[stat]} ×${value}`)
+          .join(" · ");
+
+        const bonuses = Object.entries(event.bonuses || {})
+          .map(([type, value]) => `${labelForType(type)} +${value}`)
+          .join(" · ") || "None";
+
+        const penalties = Object.entries(event.penalty || {})
+          .map(([type, value]) => `${labelForType(type)} ${value}`)
+          .join(" · ") || "None";
+
+        const support = event.name.includes("Food")
+          ? "Food stands boost park support heavily."
+          : event.name.includes("Opening") || event.name.includes("Vacation")
+            ? "Capacity and upgrades improve park support."
+            : event.name.includes("Heat") || event.name.includes("Rainy")
+              ? "Food stands and operations help stabilize revenue."
+              : "Food, capacity, and upgrades can still add park support.";
+
+        return `
+          <div style="margin-top:16px;font-size:13px;line-height:1.42;">
+            <strong>Scoring focus:</strong><br>${focus}<br><br>
+            <strong>Type bonuses:</strong><br>${bonuses}<br><br>
+            <strong>Type penalties:</strong><br>${penalties}<br><br>
+            <strong>Park support:</strong><br>${support}
+          </div>
+        `;
+      }
+
       function renderEventPanel() {
         const e = state.currentEvent;
         eventCardBig.innerHTML = `
           <div class="eventType">${e.type}</div>
           <h2>${e.name}</h2>
           <p>${e.text}</p>
-          <div style="margin-top:18px;font-size:13px;line-height:1.45;">
-            <strong>Scoring focus:</strong><br>
-            ${Object.entries(e.weights).filter(([,v]) => v > 0).map(([k,v]) => `${statNames[k]} ×${v}`).join(" · ")}
-          </div>
+          ${eventStatBlock(e)}
         `;
 
         scoreChoices.innerHTML = "";
         const player = state.players[0];
         if (!player.cards.length) {
-          scoreChoices.innerHTML = `<p style="color:#d8c99f;">You have no attractions yet. This season will hurt, but the midway is not finished.</p>`;
+          scoreChoices.innerHTML = `<p style="color:#d8c99f;">You have no attractions yet. This season will hurt, but JonathanIYT World is not finished.</p>`;
           scoreBtn.disabled = false;
           state.selectedCardId = null;
           return;
@@ -1365,10 +1406,12 @@
           const maintenance = Math.max(0, rawMaintenance - (player.ai ? 0 : setting.playerMaintenanceDiscount));
           const setBonus = themedSetBonus(player.cards);
           const supportBonus = parkSupportBonus(player.cards, event);
+          const legendLegacy = legendSeasonLegacyBonus(player.cards);
           const net = Math.max(0, gross + setBonus + supportBonus - maintenance);
           player.cash += net;
-          player.legacy += Math.floor(gross / 2) + setBonus + Math.floor(supportBonus / 2);
-          lines.push(`<strong>${player.name}</strong> featured ${chosen ? chosen.name : "nothing"}: $${gross}M gross + ${setBonus} set bonus + ${supportBonus} park support - $${maintenance}M upkeep = <strong>$${net}M</strong>.`);
+          player.legacy += Math.floor(gross / 2) + setBonus + Math.floor(supportBonus / 2) + legendLegacy;
+          const legendText = legendLegacy ? ` + ${legendLegacy} legend legacy` : "";
+          lines.push(`<strong>${player.name}</strong> featured ${chosen ? chosen.name : "nothing"}: $${gross}M gross + ${setBonus} set bonus + ${supportBonus} park support - $${maintenance}M upkeep = <strong>$${net}M</strong>${legendText}.`);
         });
         seasonResults.innerHTML = lines.map(line => `<div class="logLine">${line}</div>`).join("");
         addLog(`Season ${state.season} closes. Revenue is counted and maintenance is paid.`);
@@ -1416,14 +1459,18 @@
         }
         if (event.bonuses && event.bonuses[card.type]) total += event.bonuses[card.type];
         if (event.penalty && event.penalty[card.type]) total += event.penalty[card.type];
-        if (card.year < 1975 && event.name.includes("Heritage")) total += 5;
-        if (card.rarity === "Landmark") total += 3;
+        if ((card.year < 1975 || hasBonusType(card, "historic")) && event.name.includes("Heritage")) total += 5;
+        if (card.rarity === "Landmark" || card.rarity === "Legend") total += 3;
         return { revenue: Math.max(0, Math.round(total)) };
       }
 
       function themedSetBonus(cards) {
         const counts = cards.reduce((acc, c) => {
-          acc[c.type] = (acc[c.type] || 0) + 1;
+          const bonusGroups = [c.type];
+          if (c.year < 1980 || hasBonusType(c, "historic")) bonusGroups.push("historic");
+          bonusGroups.forEach(group => {
+            acc[group] = (acc[group] || 0) + 1;
+          });
           return acc;
         }, {});
         let bonus = 0;
@@ -1432,6 +1479,14 @@
           if (count >= 4) bonus += 3;
         }
         return bonus;
+      }
+
+      function hasBonusType(card, type) {
+        return Array.isArray(card.bonusTypes) && card.bonusTypes.includes(type);
+      }
+
+      function legendSeasonLegacyBonus(cards) {
+        return cards.some(card => card.name === "Golden Comet") ? 6 : 0;
       }
 
       function parkSupportBonus(cards, event) {
@@ -1458,8 +1513,8 @@
         })).sort((a, b) => b.finalScore - a.finalScore);
         const winner = rows[0];
         finalStory.textContent = winner.id === 0
-          ? "Your park wins the season. The skyline belongs to you, the ticket counters are full, and Coaster Capital becomes the name every rival has to chase."
-          : `${winner.name} takes the season crown, but your midway still has lights worth saving.`;
+          ? "JonathanIYT World wins the season. The skyline belongs to you, the ticket counters are full, and JonathanIYT World becomes the name every rival has to chase."
+          : `${winner.name} takes the season crown, but JonathanIYT World still has history worth saving.`;
         if (winner.id === 0) launchWinConfetti();
         else clearWinConfetti();
 
@@ -1620,14 +1675,14 @@
 
       function makeCard(card, options = {}) {
         const el = document.createElement("div");
-        el.className = `card ${card.type} ${options.auction ? "auctionCard" : ""} ${options.playable ? "playable" : ""}`;
+        el.className = `card ${card.type} ${card.legend ? "legend" : ""} ${options.auction ? "auctionCard" : ""} ${options.playable ? "playable" : ""}`;
         el.dataset.uid = card.uid;
         el.innerHTML = `
           <div class="cardInner">
             <div class="cardTop"><span>${card.rarity}</span><span>${card.year}</span></div>
             <div class="cardArt">${artFor(card)}</div>
             <div class="cardName">${card.name}</div>
-            <div class="cardFlavor">${card.flavor}</div>
+            <div class="cardFlavor">${card.legend && card.ability ? card.ability : card.flavor}</div>
             <div class="statGrid">
               <div class="miniStat">Thr ${card.stats.thrill}</div>
               <div class="miniStat">Nos ${card.stats.nostalgia}</div>
