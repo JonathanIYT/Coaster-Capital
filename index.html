@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coaster Capital</title>
+  <style>
+    :root {
+      --bg0: #070812;
+      --bg1: #15182d;
+      --felt: #12372f;
+      --felt2: #0d2522;
+      --gold: #f3b64b;
+      --cream: #fff0c8;
+      --muted: #b9ab86;
+      --red: #d75d58;
+      --green: #73c783;
+      --blue: #71b8db;
+      --purple: #a987dd;
+      --panel: rgba(10, 13, 25, 0.84);
+      --panel2: rgba(24, 28, 48, 0.92);
+      --shadow: rgba(0, 0, 0, 0.45);
+      --cardW: 176px;
+      --cardH: 262px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 0%, #273158, var(--bg1) 42%, var(--bg0) 100%);
+      color: var(--cream);
+      font-family: Georgia, "Times New Roman", serif;
+      user-select: none;
+    }
+
+    button {
+      font-family: inherit;
+      border: 0;
+      cursor: pointer;
+      color: #211319;
+      background: linear-gradient(180deg, #ffd77e, #c98227);
+      padding: 9px 14px;
+      border-radius: 999px;
+      box-shadow: 0 6px 0 #714714, 0 14px 26px rgba(0,0,0,.34);
+      font-weight: 800;
+      letter-spacing: .2px;
+      transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+    }
+
+    button:hover { transform: translateY(-2px); filter: brightness(1.04); }
+    button:active { transform: translateY(4px); box-shadow: 0 2px 0 #714714, 0 8px 18px rgba(0,0,0,.35); }
+    button:disabled { opacity: .45; cursor: not-allowed; transform: none; filter: grayscale(.3); }
+
+    .ghostBtn {
+      background: linear-gradient(180deg, #667090, #343a59);
+      color: var(--cream);
+      box-shadow: 0 6px 0 #171b31, 0 14px 26px rgba(0,0,0,.34);
+    }
+
+    .dangerBtn {
+      background: linear-gradient(180deg, #f28a78, #a53f3f);
+      color: #fff7de;
+      box-shadow: 0 6px 0 #5d2323, 0 14px 26px rgba(0,0,0,.34);
+    }
+
+    #app {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: grid;
+      place-items: center;
+      perspective: 1400px;
+    }
+
+    #table {
+      position: relative;
+      width: min(1420px, calc(100vw - 24px));
+      height: min(850px, calc(100vh - 24px));
+      border-radius: 34px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(255,255,255,.06), transparent 34%),
+        radial-gradient(circle at 50% 115%, rgba(243,182,75,.12), transparent 40%),
+        linear-gradient(135deg, var(--felt), var(--felt2));
+      box-shadow: 0 34px 90px rgba(0,0,0,.58), inset 0 0 0 2px rgba(255,255,255,.06), inset 0 0 90px rgba(0,0,0,.28);
+      transform: rotateX(4deg);
+    }
+
+    #table:before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border-radius: 26px;
+      border: 2px solid rgba(243,182,75,.22);
+      pointer-events: none;
+    }
+
+    #table:after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 44px 44px;
+      opacity: .45;
+      pointer-events: none;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(243,182,75,.16), transparent 28%),
+        linear-gradient(180deg, rgba(8,10,22,.9), rgba(3,4,10,.96));
+    }
+
+    .titleCard {
+      width: min(900px, calc(100vw - 28px));
+      max-height: calc(100vh - 28px);
+      overflow: hidden;
+      text-align: center;
+      border-radius: 28px;
+      padding: clamp(14px, 2.4vw, 28px);
+      background: rgba(14, 17, 33, .88);
+      border: 1px solid rgba(243,182,75,.42);
+      box-shadow: 0 28px 90px rgba(0,0,0,.6);
+      position: relative;
+    }
+
+    .titleCard:before {
+      content: "";
+      position: absolute;
+      inset: -45%;
+      background: repeating-conic-gradient(from 20deg, rgba(243,182,75,.07) 0 8deg, transparent 8deg 18deg);
+      animation: marqueeSpin 46s linear infinite;
+      pointer-events: none;
+    }
+
+    .titleInner { position: relative; z-index: 1; }
+    @keyframes marqueeSpin { to { transform: rotate(360deg); } }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(36px, 6.5vw, 76px);
+      line-height: .95;
+      color: #ffd477;
+      text-shadow: 0 8px 0 rgba(0,0,0,.28), 0 0 44px rgba(243,182,75,.18);
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      max-width: 720px;
+      margin: 10px auto 0;
+      color: #e8d6ab;
+      font-size: clamp(14px, 1.8vw, 18px);
+      line-height: 1.28;
+    }
+
+    .pillRow, .buttonRow {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 14px;
+    }
+
+    .pill {
+      color: #ead9ad;
+      border: 1px solid rgba(243,182,75,.28);
+      background: rgba(255,255,255,.06);
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+
+    .ruleGrid {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 9px;
+      text-align: left;
+    }
+
+    .ruleBox {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 16px;
+      padding: 10px;
+      color: #d7c79d;
+      line-height: 1.25;
+      font-size: 13px;
+    }
+
+    .ruleBox strong { color: #ffd477; display: block; margin-bottom: 5px; }
+
+    #hud {
+      position: absolute;
+      z-index: 10;
+      left: 22px;
+      right: 22px;
+      top: 18px;
+      display: grid;
+      grid-template-columns: 1fr 1.35fr 1fr;
+      gap: 12px;
+      pointer-events: none;
+    }
+
+    .hudBox, .panel {
+      background: var(--panel);
+      border: 1px solid rgba(243,182,75,.28);
+      box-shadow: 0 12px 30px rgba(0,0,0,.34);
+      border-radius: 20px;
+      padding: 13px 15px;
+      backdrop-filter: blur(7px);
+    }
+
+    .hudTitle {
+      color: var(--gold);
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .hudText {
+      color: #e9ddba;
+      font-size: 14px;
+      line-height: 1.28;
+    }
+
+    #seasonTrack {
+      display: flex;
+      gap: 7px;
+      margin-top: 8px;
+      justify-content: center;
+    }
+
+    .seasonDot {
+      width: 28px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.16);
+      border: 1px solid rgba(255,255,255,.14);
+    }
+
+    .seasonDot.active { background: var(--gold); box-shadow: 0 0 18px rgba(243,182,75,.42); }
+    .seasonDot.done { background: var(--green); }
+
+    #opponents {
+      position: absolute;
+      z-index: 8;
+      top: 112px;
+      left: 22px;
+      right: 22px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .parkPanel {
+      background: rgba(10,13,25,.72);
+      border: 1px solid rgba(255,255,255,.11);
+      box-shadow: 0 12px 26px rgba(0,0,0,.25);
+      border-radius: 18px;
+      padding: 11px;
+      min-height: 86px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .parkPanel.playerPark { border-color: rgba(243,182,75,.5); }
+    .parkName { color: #ffe3a5; font-weight: 800; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .parkPersona { color: var(--muted); font-size: 12px; margin-top: 2px; }
+    .parkStats { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 8px; }
+    .statChip { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.08); border-radius: 999px; padding: 4px 7px; color: #e9ddba; font-size: 12px; }
+    .turnGlow { position: absolute; inset: 0; border: 2px solid var(--gold); border-radius: 18px; pointer-events: none; box-shadow: inset 0 0 26px rgba(243,182,75,.24); }
+
+    #centerStage {
+      position: absolute;
+      z-index: 5;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -44%);
+      width: min(970px, calc(100vw - 72px));
+      display: grid;
+      grid-template-columns: 1fr var(--cardW) 1fr;
+      gap: 22px;
+      align-items: center;
+      pointer-events: auto;
+    }
+
+    .sidePanel {
+      min-height: 300px;
+      background: rgba(6,8,18,.54);
+      border: 1px solid rgba(255,255,255,.09);
+      box-shadow: inset 0 0 38px rgba(0,0,0,.18), 0 16px 30px rgba(0,0,0,.26);
+      border-radius: 24px;
+      padding: 16px;
+    }
+
+    .sidePanel h2 {
+      color: var(--gold);
+      margin: 0 0 10px;
+      font-size: 22px;
+    }
+
+    .sidePanel p {
+      margin: 0 0 10px;
+      color: #e1d3ad;
+      line-height: 1.34;
+      font-size: 15px;
+    }
+
+    #auctionControls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 14px;
+      align-items: center;
+    }
+
+    .bidDisplay {
+      width: 100%;
+      background: rgba(0,0,0,.32);
+      border: 1px solid rgba(243,182,75,.2);
+      border-radius: 14px;
+      padding: 9px 11px;
+      color: #ffe7ae;
+      font-size: 15px;
+    }
+
+    #log {
+      height: 210px;
+      overflow: auto;
+      padding-right: 4px;
+      font-size: 14px;
+      color: #d7c79d;
+      line-height: 1.35;
+    }
+
+    .logLine {
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+
+    .logLine strong { color: #ffe0a0; }
+
+    .cardZone {
+      display: grid;
+      place-items: center;
+      min-height: 300px;
+      perspective: 1100px;
+    }
+
+    .card {
+      width: var(--cardW);
+      height: var(--cardH);
+      position: relative;
+      border-radius: 18px;
+      transform-style: preserve-3d;
+      transition: transform .25s ease, filter .18s ease, box-shadow .18s ease;
+      box-shadow: 0 18px 36px rgba(0,0,0,.42);
+      cursor: default;
+    }
+
+    .card.playable { cursor: pointer; }
+    .card.playable:hover { transform: translateY(-10px) rotateX(7deg) rotateY(-7deg) scale(1.04); filter: brightness(1.05); }
+    .card.selected { transform: translateY(-14px) rotateX(6deg) scale(1.08); box-shadow: 0 0 0 3px rgba(243,182,75,.85), 0 24px 45px rgba(0,0,0,.55); }
+    .card.auctionCard { animation: cardDrop .55s cubic-bezier(.18,.9,.22,1.2); transform: rotateX(5deg) rotateY(-5deg); }
+    @keyframes cardDrop { from { opacity: 0; transform: translateY(-80px) rotateX(60deg) rotateZ(-5deg); } to { opacity: 1; transform: rotateX(5deg) rotateY(-5deg); } }
+
+    .cardInner {
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #f8e3b4, #d29d54 58%, #6c3d2a);
+      border: 2px solid rgba(255,255,255,.35);
+      box-shadow: inset 0 0 0 5px rgba(56,31,24,.22);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card.coaster .cardInner { background: linear-gradient(180deg, #f6d79c, #c6664f 60%, #5a2530); }
+    .card.dark .cardInner { background: linear-gradient(180deg, #c9b5ef, #5f4b91 58%, #24213c); }
+    .card.water .cardInner { background: linear-gradient(180deg, #bdeaff, #4b9fc5 56%, #19445c); }
+    .card.family .cardInner { background: linear-gradient(180deg, #d6f2b1, #6cae64 56%, #254c34); }
+    .card.food .cardInner { background: linear-gradient(180deg, #ffe3a0, #d68a36 56%, #66371e); }
+    .card.upgrade .cardInner { background: linear-gradient(180deg, #d3d9e8, #747e9d 56%, #2a3149); }
+
+    .cardTop {
+      height: 28px;
+      flex: 0 0 28px;
+      background: rgba(0,0,0,.35);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 9px;
+      color: #fff8db;
+      font-size: 11px;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+
+    .cardArt {
+      position: relative;
+      height: 70px;
+      flex: 0 0 70px;
+      margin: 8px 10px 5px;
+      border-radius: 12px;
+      background: radial-gradient(circle at 50% 20%, rgba(255,255,255,.34), transparent 28%), linear-gradient(180deg, rgba(11,17,32,.25), rgba(6,8,14,.38));
+      border: 1px solid rgba(255,255,255,.24);
+      overflow: hidden;
+    }
+
+    .cardArt svg { width: 100%; height: 100%; display: block; }
+
+    .cardName {
+      color: #211319;
+      font-size: 15px;
+      line-height: 1.05;
+      font-weight: 900;
+      padding: 0 10px;
+      min-height: 0;
+      max-height: 34px;
+      overflow: hidden;
+      text-shadow: 0 1px rgba(255,255,255,.28);
+    }
+
+    .cardFlavor {
+      padding: 2px 10px 0;
+      color: rgba(28,18,21,.86);
+      font-size: 10.5px;
+      line-height: 1.15;
+      min-height: 38px;
+      max-height: 38px;
+      overflow: hidden;
+    }
+
+    .statGrid {
+      position: static;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      margin: 5px 9px 0;
+      flex: 0 0 auto;
+    }
+
+    .miniStat {
+      background: rgba(255,255,255,.35);
+      border: 1px solid rgba(30,20,20,.16);
+      color: #24151c;
+      border-radius: 7px;
+      padding: 2px 2px;
+      font-size: 9.5px;
+      line-height: 1.05;
+      text-align: center;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .cardBottom {
+      position: static;
+      margin: auto 8px 8px;
+      height: 24px;
+      flex: 0 0 24px;
+      background: rgba(0,0,0,.38);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 9px;
+      color: #fff2c7;
+      font-size: 11px;
+      font-weight: 800;
+      border-radius: 8px;
+    }
+
+    .backCard .cardInner {
+      background:
+        radial-gradient(circle at 50% 50%, rgba(243,182,75,.25), transparent 33%),
+        repeating-linear-gradient(45deg, rgba(255,255,255,.08) 0 8px, transparent 8px 16px),
+        linear-gradient(135deg, #4a2435, #111827);
+      display: grid;
+      place-items: center;
+      color: #ffd477;
+      font-weight: 900;
+      text-align: center;
+      padding: 20px;
+      font-size: 20px;
+    }
+
+    #playerBoard {
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      bottom: 18px;
+      z-index: 9;
+      min-height: 166px;
+      background: rgba(5,7,15,.56);
+      border: 1px solid rgba(243,182,75,.26);
+      border-radius: 24px;
+      padding: 13px 16px 16px;
+      box-shadow: 0 18px 38px rgba(0,0,0,.34);
+    }
+
+    .boardHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .boardTitle { color: #ffd477; font-size: 20px; }
+    .boardHint { color: #cabb93; font-size: 13px; }
+
+    #parkCards {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 4px 6px 10px;
+      min-height: 120px;
+    }
+
+    #parkCards .card {
+      flex: 0 0 104px;
+      width: 104px;
+      height: 150px;
+      border-radius: 13px;
+    }
+
+    #parkCards .cardInner { border-radius: 13px; }
+    #parkCards .cardTop { height: 20px; flex-basis: 20px; font-size: 8px; padding: 0 6px; }
+    #parkCards .cardArt { height: 40px; flex-basis: 40px; margin: 5px 6px 3px; border-radius: 8px; }
+    #parkCards .cardName { font-size: 10px; line-height: 1.05; min-height: 0; max-height: 21px; padding: 0 6px; }
+    #parkCards .cardFlavor { display: none; }
+    #parkCards .statGrid { margin: 4px 6px 0; gap: 2px; }
+    #parkCards .miniStat { font-size: 7.5px; padding: 1px; border-radius: 5px; }
+    #parkCards .cardBottom { height: 17px; flex-basis: 17px; font-size: 7.5px; padding: 0 5px; margin: auto 5px 5px; border-radius: 6px; }
+
+    #eventOverlay {
+      position: absolute;
+      inset: 0;
+      z-index: 40;
+      display: none;
+      place-items: center;
+      background: rgba(4,6,12,.64);
+      backdrop-filter: blur(4px);
+      padding: 22px;
+    }
+
+    .eventPanel {
+      width: min(1080px, 94vw);
+      max-height: 92vh;
+      overflow: auto;
+      background: rgba(14,17,31,.95);
+      border: 1px solid rgba(243,182,75,.4);
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: 0 28px 80px rgba(0,0,0,.6);
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 22px;
+    }
+
+    .eventCardBig {
+      min-height: 290px;
+      background: linear-gradient(180deg, #f3dfb2, #72413a);
+      color: #24151c;
+      border-radius: 22px;
+      padding: 15px;
+      box-shadow: 0 18px 35px rgba(0,0,0,.45);
+      border: 2px solid rgba(255,255,255,.38);
+    }
+
+    .eventCardBig .eventType {
+      background: rgba(0,0,0,.28);
+      color: #fff4d5;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 12px;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 900;
+    }
+
+    .eventCardBig h2 { margin: 18px 0 10px; font-size: 26px; line-height: 1; }
+    .eventCardBig p { font-size: 15px; line-height: 1.32; margin: 0; }
+
+    .scoreCards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    #resultOverlay {
+      position: absolute;
+      inset: 0;
+      z-index: 60;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(243,182,75,.18), transparent 28%),
+        rgba(3,4,10,.84);
+      backdrop-filter: blur(5px);
+    }
+
+    .resultsBox {
+      width: min(900px, 94vw);
+      background: rgba(14,17,31,.96);
+      border: 1px solid rgba(243,182,75,.44);
+      border-radius: 30px;
+      padding: 26px;
+      box-shadow: 0 30px 90px rgba(0,0,0,.62);
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    #winConfetti {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .confettiPiece {
+      position: absolute;
+      top: -24px;
+      width: 10px;
+      height: 16px;
+      border-radius: 3px;
+      opacity: .95;
+      animation: confettiFall 3.2s linear forwards;
+    }
+
+    @keyframes confettiFall {
+      0% { transform: translateY(-30px) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translateY(110vh) rotate(760deg); opacity: 0; }
+    }
+
+    .ranking {
+      display: grid;
+      gap: 10px;
+      margin: 20px auto;
+      max-width: 680px;
+      text-align: left;
+    }
+
+    .rankRow {
+      display: grid;
+      grid-template-columns: 45px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    .rankRow:first-child { border-color: rgba(243,182,75,.58); box-shadow: 0 0 26px rgba(243,182,75,.12); }
+    .rankNum { color: #ffd477; font-size: 22px; font-weight: 900; text-align: center; }
+    .rankName { color: #fff0c8; font-weight: 900; }
+    .rankDetail { color: var(--muted); font-size: 13px; }
+    .rankScore { color: #ffd477; font-weight: 900; }
+
+    .sparkle {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(255,220,135,.8);
+      box-shadow: 0 0 18px rgba(255,220,135,.7);
+      animation: floatSpark 5s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes floatSpark {
+      0% { transform: translateY(0) scale(.6); opacity: 0; }
+      18% { opacity: .8; }
+      100% { transform: translateY(-160px) scale(1.2); opacity: 0; }
+    }
+
+    @media (max-height: 700px) {
+      .screen { padding: 10px; }
+      .titleCard {
+        width: min(820px, calc(100vw - 20px));
+        max-height: calc(100vh - 20px);
+        padding: 12px;
+        border-radius: 22px;
+      }
+      h1 { font-size: clamp(32px, 5.6vw, 58px); }
+      .subtitle { font-size: 14px; line-height: 1.22; margin-top: 8px; }
+      .pillRow { margin-top: 10px; gap: 7px; }
+      .pill { padding: 5px 8px; font-size: 11px; }
+      .ruleGrid { margin-top: 10px; gap: 7px; }
+      .ruleBox { padding: 8px; font-size: 12px; line-height: 1.18; }
+      .buttonRow { margin-top: 10px; }
+      button { padding: 8px 12px; font-size: 13px; }
+    }
+
+    @media (max-height: 560px) {
+      .pillRow { display: none; }
+      .ruleGrid { grid-template-columns: repeat(3, 1fr); }
+      .ruleBox { font-size: 11px; }
+      .ruleBox strong { margin-bottom: 2px; }
+    }
+
+    @media (max-width: 980px) {
+      :root { --cardW: 148px; --cardH: 222px; }
+      #hud { grid-template-columns: 1fr; gap: 7px; top: 8px; left: 10px; right: 10px; }
+      #opponents { top: 180px; grid-template-columns: repeat(2, 1fr); left: 10px; right: 10px; gap: 7px; }
+      .parkPanel { min-height: 68px; padding: 8px; }
+      #centerStage { top: 52%; grid-template-columns: 1fr; width: calc(100vw - 30px); gap: 10px; }
+      .sidePanel { min-height: auto; padding: 12px; }
+      #log { height: 110px; }
+      #playerBoard { left: 10px; right: 10px; bottom: 8px; min-height: 132px; }
+      #parkCards .card { flex-basis: 82px; width: 82px; height: 116px; }
+      #parkCards .statGrid, #parkCards .cardFlavor { display: none; }
+      #parkCards .cardArt { height: 35px; }
+      .eventPanel { grid-template-columns: 1fr; }
+      .ruleGrid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="table">
+      <div id="hud">
+        <div class="hudBox">
+          <div class="hudTitle">Coaster Capital</div>
+          <div class="hudText" id="phaseText">A roller coaster auction card game.</div>
+        </div>
+        <div class="hudBox">
+          <div class="hudTitle" id="objectiveTitle">Objective</div>
+          <div class="hudText" id="objectiveText">Win auctions, build your park, and survive five seasons.</div>
+          <div id="seasonTrack"></div>
+        </div>
+        <div class="hudBox">
+          <div class="hudTitle">Controls</div>
+          <div class="hudText">Bid or pass during auctions. During events, click one attraction to feature it and chase the highest park value.</div>
+        </div>
+      </div>
+
+      <div id="opponents"></div>
+
+      <div id="centerStage">
+        <div class="sidePanel">
+          <h2 id="auctionTitle">Auction Lot</h2>
+          <p id="auctionText">The next attraction will slide onto the table when the game begins.</p>
+          <div class="bidDisplay" id="bidDisplay">Current bid: $0M</div>
+          <div id="auctionControls">
+            <button id="bid1Btn">Bid +$1M</button>
+            <button id="bid3Btn">Bid +$3M</button>
+            <button id="passBtn" class="dangerBtn">Pass</button>
+            <button id="nextBtn" class="ghostBtn" style="display:none;">Next Lot</button>
+          </div>
+        </div>
+
+        <div class="cardZone" id="auctionCardZone"></div>
+
+        <div class="sidePanel">
+          <h2>Table Log</h2>
+          <div id="log"></div>
+        </div>
+      </div>
+
+      <div id="playerBoard">
+        <div class="boardHeader">
+          <div class="boardTitle">Your Park Board</div>
+          <div class="boardHint" id="boardHint">Collected attractions appear here.</div>
+        </div>
+        <div id="parkCards"></div>
+      </div>
+
+      <div id="eventOverlay">
+        <div class="eventPanel">
+          <div class="eventCardBig" id="eventCardBig"></div>
+          <div>
+            <h2 style="margin:0;color:#ffd477;">Opening Weekend Event</h2>
+            <p style="color:#d8c99f;line-height:1.36;">Choose one attraction from your park to feature this season. The AI parks will pick their strongest match. Revenue becomes legacy points, but every attraction still costs maintenance.</p>
+            <div class="scoreCards" id="scoreChoices"></div>
+            <div class="buttonRow" style="justify-content:flex-start;">
+              <button id="scoreBtn" disabled>Feature Selected Attraction</button>
+            </div>
+            <div id="seasonResults" style="margin-top:16px;color:#e8d6ab;line-height:1.4;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="resultOverlay">
+        <div id="winConfetti" aria-hidden="true"></div>
+        <div class="resultsBox">
+          <h1 style="font-size:clamp(36px,6vw,76px);">Season Closed</h1>
+          <p class="subtitle" id="finalStory">The lights settle over the midway.</p>
+          <div class="ranking" id="ranking"></div>
+          <div class="buttonRow">
+            <button id="restartBtn">Play Again</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="startScreen" class="screen">
+      <div class="titleCard">
+        <div class="titleInner">
+          <h1>Coaster Capital</h1>
+          <p class="subtitle">A 3D-style browser card game where you bid against rival park operators, buy coasters, attractions, food stands, and upgrades, then build the richest park before the final season closes.</p>
+          <div class="pillRow">
+            <div class="pill">3 AI opponents</div>
+            <div class="pill">5 operating seasons</div>
+            <div class="pill">Auction strategy</div>
+            <div class="pill">Coasters, dark rides, food, and upgrades</div>
+          </div>
+          <div class="ruleGrid">
+            <div class="ruleBox"><strong>1. Buy the midway.</strong>Each season has three auction lots. Bid carefully because cash is also part of your final score.</div>
+            <div class="ruleBox"><strong>2. Match the crowd.</strong>Events favor different stats: thrill, nostalgia, capacity, theme, or food.</div>
+            <div class="ruleBox"><strong>3. Pay the upkeep.</strong>Big rides score huge, but maintenance can chew through your budget like an old lift chain.</div>
+          </div>
+          <div class="buttonRow">
+            <button id="startBtn">Start Game</button>
+            <button id="musicBtn" class="ghostBtn" style="display:none;" aria-hidden="true" tabindex="-1"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="difficultyScreen" class="screen" style="display:none;">
+      <div class="titleCard">
+        <div class="titleInner">
+          <h1 style="font-size:clamp(34px,6vw,72px);">Choose Difficulty</h1>
+          <p class="subtitle">Pick how aggressive the rival parks should be before JonathanIYT World enters the auction floor.</p>
+          <div class="ruleGrid">
+            <div class="ruleBox"><strong>Easy</strong>Forgiving, but the rivals can still steal a season if you overspend.</div>
+            <div class="ruleBox"><strong>Medium</strong>Competitive, with less cushion and smarter rival bidding.</div>
+            <div class="ruleBox"><strong>Hard</strong>Fair, tense, and much easier to lose if the auction goes sideways.</div>
+          </div>
+          <div class="buttonRow">
+            <button class="difficultyBtn" data-difficulty="easy">Easy</button>
+            <button class="difficultyBtn" data-difficulty="medium">Medium</button>
+            <button class="difficultyBtn dangerBtn" data-difficulty="hard">Hard</button>
+          </div>
+          <div class="buttonRow">
+            <button id="backToStartBtn" class="ghostBtn">Back</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const $ = (id) => document.getElementById(id);
+      const phaseText = $("phaseText");
+      const objectiveTitle = $("objectiveTitle");
+      const objectiveText = $("objectiveText");
+      const seasonTrack = $("seasonTrack");
+      const opponentsEl = $("opponents");
+      const auctionTitle = $("auctionTitle");
+      const auctionText = $("auctionText");
+      const bidDisplay = $("bidDisplay");
+      const auctionCardZone = $("auctionCardZone");
+      const logEl = $("log");
+      const parkCardsEl = $("parkCards");
+      const boardHint = $("boardHint");
+      const eventOverlay = $("eventOverlay");
+      const eventCardBig = $("eventCardBig");
+      const scoreChoices = $("scoreChoices");
+      const scoreBtn = $("scoreBtn");
+      const seasonResults = $("seasonResults");
+      const resultOverlay = $("resultOverlay");
+      const ranking = $("ranking");
+      const finalStory = $("finalStory");
+
+      const bid1Btn = $("bid1Btn");
+      const bid3Btn = $("bid3Btn");
+      const passBtn = $("passBtn");
+      const nextBtn = $("nextBtn");
+      const startBtn = $("startBtn");
+      const musicBtn = $("musicBtn");
+      const restartBtn = $("restartBtn");
+      const startScreen = $("startScreen");
+      const difficultyScreen = $("difficultyScreen");
+      const backToStartBtn = $("backToStartBtn");
+
+      const MAX_SEASONS = 5;
+      const LOTS_PER_SEASON = 3;
+
+      const statNames = {
+        thrill: "Thrill",
+        nostalgia: "Nostalgia",
+        capacity: "Capacity",
+        theme: "Theme",
+        food: "Food"
+      };
+
+      const cardLibrary = [
+        { name: "Boardwalk Cyclone", year: 1931, type: "coaster", rarity: "Historic", min: 5, maint: 4, stats: { thrill: 6, nostalgia: 10, capacity: 6, theme: 5, food: 0 }, flavor: "Old timber, salt air, and a chain lift that sounds like a memory refusing to retire." },
+        { name: "Neon Galaxy Launch", year: 2004, type: "coaster", rarity: "Major", min: 8, maint: 6, stats: { thrill: 10, nostalgia: 3, capacity: 7, theme: 6, food: 0 }, flavor: "A high-voltage launch coaster built for billboards, skyline shots, and nervous laughter." },
+        { name: "Ozark Outlaw Mine Train", year: 1982, type: "coaster", rarity: "Classic", min: 6, maint: 3, stats: { thrill: 5, nostalgia: 7, capacity: 8, theme: 8, food: 0 }, flavor: "Family-friendly speed through timber tunnels, fake dynamite, and very real charm." },
+        { name: "Vulture Peak Suspended", year: 1998, type: "coaster", rarity: "Thrill", min: 7, maint: 5, stats: { thrill: 8, nostalgia: 4, capacity: 7, theme: 7, food: 0 }, flavor: "A swinging steel flight over quarry walls and abandoned queue buildings." },
+        { name: "Timber Jack", year: 1926, type: "coaster", rarity: "Landmark", min: 6, maint: 6, stats: { thrill: 5, nostalgia: 10, capacity: 5, theme: 6, food: 0 }, flavor: "One of those rides that feels older than the park map and louder than the present." },
+        { name: "Iron Sparrow", year: 2012, type: "coaster", rarity: "Modern", min: 9, maint: 5, stats: { thrill: 9, nostalgia: 2, capacity: 9, theme: 5, food: 0 }, flavor: "Smooth steel, big drops, and enough capacity to swallow a summer line whole." },
+        { name: "Flooded Caverns", year: 1974, type: "water", rarity: "Classic", min: 5, maint: 4, stats: { thrill: 3, nostalgia: 8, capacity: 8, theme: 9, food: 0 }, flavor: "A boat ride through glowing rockwork, echoing banjos, and suspiciously dramatic waterfalls." },
+        { name: "River Barrel Flume", year: 1988, type: "water", rarity: "Family", min: 5, maint: 4, stats: { thrill: 5, nostalgia: 6, capacity: 7, theme: 7, food: 0 }, flavor: "The ride every family agrees on when the pavement starts shimmering in July." },
+        { name: "Phantom Manor Arcade", year: 1967, type: "dark", rarity: "Dark Ride", min: 5, maint: 3, stats: { thrill: 3, nostalgia: 9, capacity: 6, theme: 10, food: 0 }, flavor: "Painted ghosts, squeaky doors, and the kind of darkness that turns cheap gags into legends." },
+        { name: "Clockwork Carnival", year: 1991, type: "dark", rarity: "Indoor", min: 6, maint: 4, stats: { thrill: 4, nostalgia: 6, capacity: 7, theme: 10, food: 0 }, flavor: "A theatrical dark ride where every gear, jester, and lantern has too much personality." },
+        { name: "Carousel of Lanterns", year: 1919, type: "family", rarity: "Historic", min: 4, maint: 2, stats: { thrill: 1, nostalgia: 10, capacity: 6, theme: 8, food: 0 }, flavor: "Hand-carved animals, warm bulbs, and a band organ that refuses to sound small." },
+        { name: "Skyline Wheel", year: 1995, type: "family", rarity: "Icon", min: 5, maint: 2, stats: { thrill: 2, nostalgia: 6, capacity: 8, theme: 7, food: 0 }, flavor: "Not the fastest ride in the park, but the one that ends up in every sunset photo." },
+        { name: "Foundry Drop", year: 2015, type: "coaster", rarity: "Tower", min: 7, maint: 4, stats: { thrill: 9, nostalgia: 2, capacity: 5, theme: 7, food: 0 }, flavor: "A vertical exclamation mark dressed up as industrial theming." },
+        { name: "Tin Roof Flyers", year: 1978, type: "family", rarity: "Flat Ride", min: 3, maint: 2, stats: { thrill: 4, nostalgia: 7, capacity: 6, theme: 5, food: 0 }, flavor: "A spinning classic with paint chips, gentle chaos, and surprisingly loyal fans." },
+        { name: "Midway Pizza Palace", year: 1985, type: "food", rarity: "Food", min: 4, maint: 1, stats: { thrill: 1, nostalgia: 5, capacity: 8, theme: 4, food: 10 }, flavor: "The kind of pizza stand that smells better than it tastes, then somehow becomes tradition." },
+        { name: "Funnel Cake Foundry", year: 1972, type: "food", rarity: "Food", min: 4, maint: 1, stats: { thrill: 1, nostalgia: 8, capacity: 6, theme: 5, food: 9 }, flavor: "Powdered sugar, hot oil, and a line that tells you the park is alive." },
+        { name: "Parking Lot Expansion", year: 2026, type: "upgrade", rarity: "Upgrade", min: 4, maint: 1, stats: { thrill: 0, nostalgia: 1, capacity: 10, theme: 2, food: 1 }, flavor: "No postcard ever showed it, but every packed Saturday depends on it." },
+        { name: "Festival Stage", year: 2001, type: "upgrade", rarity: "Seasonal", min: 4, maint: 2, stats: { thrill: 1, nostalgia: 4, capacity: 7, theme: 8, food: 4 }, flavor: "A flexible stage that turns slow weekends into reasons to stay after dark." },
+        { name: "Haunt Walkthrough", year: 1999, type: "dark", rarity: "Seasonal", min: 5, maint: 3, stats: { thrill: 6, nostalgia: 4, capacity: 6, theme: 9, food: 0 }, flavor: "Black plywood, fog machines, and an October line that always looks longer at night." },
+        { name: "Lakeside Boardwalk", year: 1954, type: "upgrade", rarity: "Scenic", min: 5, maint: 2, stats: { thrill: 0, nostalgia: 8, capacity: 7, theme: 9, food: 3 }, flavor: "A stretch of planks that makes a park feel older, wider, and more worth remembering." },
+        { name: "Rocket Raceway", year: 1962, type: "family", rarity: "Vintage", min: 4, maint: 3, stats: { thrill: 4, nostalgia: 9, capacity: 5, theme: 7, food: 0 }, flavor: "Miniature cars, chrome fins, and steering wheels that barely change destiny." },
+        { name: "Geyser Gulch Rapids", year: 1997, type: "water", rarity: "Wet Ride", min: 7, maint: 5, stats: { thrill: 6, nostalgia: 4, capacity: 9, theme: 8, food: 0 }, flavor: "A spinning raft ride with soaked shoes, canyon walls, and heroic drainage bills." },
+        { name: "Twilight Theater", year: 1938, type: "dark", rarity: "Indoor", min: 5, maint: 3, stats: { thrill: 2, nostalgia: 9, capacity: 7, theme: 9, food: 0 }, flavor: "A rescued indoor show building where velvet curtains hide decades of dust and applause." },
+        { name: "Smokehouse Row", year: 1990, type: "food", rarity: "Food", min: 5, maint: 2, stats: { thrill: 2, nostalgia: 6, capacity: 7, theme: 7, food: 10 }, flavor: "A reliable cloud of barbecue smoke that does half the advertising before noon." },
+        { name: "Starliner Wild Mouse", year: 1970, type: "coaster", rarity: "Compact", min: 5, maint: 3, stats: { thrill: 7, nostalgia: 8, capacity: 4, theme: 4, food: 0 }, flavor: "Sharp turns, tiny cars, and a layout that feels legally impossible in the best way." },
+        { name: "Grand Expo Plaza", year: 2020, type: "upgrade", rarity: "Infrastructure", min: 6, maint: 2, stats: { thrill: 0, nostalgia: 2, capacity: 10, theme: 8, food: 4 }, flavor: "Shade, benches, pathways, and the unglamorous magic of people not feeling trapped." },
+        { name: "Mystic Mill Chute", year: 2026, type: "water", rarity: "New Build", min: 8, maint: 5, stats: { thrill: 7, nostalgia: 3, capacity: 8, theme: 9, food: 0 }, flavor: "A modern splash ride wrapped in old millwork, storm lanterns, and theatrical mist." },
+        { name: "Cinder Creek BBQ", year: 2026, type: "food", rarity: "New Food", min: 5, maint: 2, stats: { thrill: 2, nostalgia: 3, capacity: 8, theme: 8, food: 10 }, flavor: "The sort of restaurant expansion that quietly fixes guest satisfaction by dinner." },
+        { name: "Lost Frontier Railroad", year: 1948, type: "family", rarity: "Transport", min: 6, maint: 4, stats: { thrill: 2, nostalgia: 10, capacity: 10, theme: 9, food: 0 }, flavor: "A steam train that makes the whole park feel connected, even when it is barely moving." },
+        { name: "Thunderhead Revival", year: 2026, type: "coaster", rarity: "Restoration", min: 9, maint: 4, stats: { thrill: 8, nostalgia: 9, capacity: 8, theme: 7, food: 0 }, flavor: "A restored wooden coaster with new track, old soul, and a station full of second chances." }
+      ];
+
+      const eventLibrary = [
+        { name: "Summer Heat Wave", type: "Weather", text: "Guests chase shade, water, and high-capacity relief from the midway pavement.", weights: { thrill: 1, nostalgia: 1, capacity: 2, theme: 2, food: 0 }, bonuses: { water: 8, food: 6, upgrade: 3 } },
+        { name: "Coaster Enthusiast Weekend", type: "Crowd", text: "The lot fills with tripods, vintage shirts, and people who know manufacturer histories by heart.", weights: { thrill: 3, nostalgia: 2, capacity: 2, theme: 1, food: 0 }, bonuses: { coaster: 8 } },
+        { name: "Haunt Season", type: "Seasonal", text: "Fog rolls across the walkways and the park earns its money after sunset.", weights: { thrill: 2, nostalgia: 2, capacity: 1, theme: 3, food: 0 }, bonuses: { dark: 8, food: 2 } },
+        { name: "Family Vacation Boom", type: "Crowd", text: "The best attraction is the one everyone can agree on before the kids get tired.", weights: { thrill: 1, nostalgia: 2, capacity: 3, theme: 2, food: 0 }, bonuses: { family: 6, water: 3, food: 2 } },
+        { name: "Food Festival", type: "Seasonal", text: "People came hungry and stayed longer than expected.", weights: { thrill: 1, nostalgia: 1, capacity: 2, theme: 2, food: 3 }, bonuses: { food: 10, upgrade: 3 } },
+        { name: "Rainy Saturday", type: "Weather", text: "Outdoor crowds shrink, indoor rides and smart operations keep the gates from feeling empty.", weights: { thrill: 1, nostalgia: 2, capacity: 2, theme: 3, food: 0 }, bonuses: { dark: 8, food: 4 }, penalty: { water: -4, coaster: -2 } },
+        { name: "Viral POV Video", type: "Media", text: "A single clip turns one attraction into the ride everyone talks about first.", weights: { thrill: 3, nostalgia: 1, capacity: 2, theme: 2, food: 0 }, bonuses: { coaster: 7, dark: 3 } },
+        { name: "Heritage Weekend", type: "History", text: "Guests arrive for old names, old paint, old stories, and the feeling that the park kept its promise.", weights: { thrill: 1, nostalgia: 3, capacity: 2, theme: 2, food: 0 }, bonuses: { family: 5, coaster: 3, dark: 3, food: 2 } },
+        { name: "Corporate Buyout Rumor", type: "Pressure", text: "The crowd turns emotional. Every beloved ride suddenly matters more than the balance sheet.", weights: { thrill: 1, nostalgia: 3, capacity: 2, theme: 3, food: 0 }, bonuses: { upgrade: 2, family: 4, food: 2 } },
+        { name: "Opening Day Crush", type: "Operations", text: "Capacity decides whether the midway feels exciting or impossible.", weights: { thrill: 1, nostalgia: 1, capacity: 3, theme: 2, food: 0 }, bonuses: { upgrade: 6, food: 4 } }
+      ];
+
+      const state = {
+        started: false,
+        muted: false,
+        difficulty: "medium",
+        season: 1,
+        lot: 1,
+        phase: "start",
+        deck: [],
+        eventDeck: [],
+        currentCard: null,
+        currentEvent: null,
+        activeBidders: [],
+        currentBid: 0,
+        highestBidder: null,
+        currentTurn: 0,
+        selectedCardId: null,
+        players: [],
+        usedAuctionCardNames: [],
+        log: []
+      };
+
+      const difficultySettings = {
+        easy: {
+          label: "Easy",
+          startingCash: 43,
+          aiRiskMultiplier: 0.65,
+          aiValuePenalty: -3.5,
+          playerLegacyBonus: 0,
+          playerRevenueMultiplier: 1.2,
+          aiRevenueMultiplier: 0.94,
+          playerMaintenanceDiscount: 3
+        },
+        medium: {
+          label: "Medium",
+          startingCash: 43,
+          aiRiskMultiplier: 0.85,
+          aiValuePenalty: -1.5,
+          playerLegacyBonus: 0,
+          playerRevenueMultiplier: 1.08,
+          aiRevenueMultiplier: 0.99,
+          playerMaintenanceDiscount: 1
+        },
+        hard: {
+          label: "Hard",
+          startingCash: 43,
+          aiRiskMultiplier: 1.05,
+          aiValuePenalty: 0.5,
+          playerLegacyBonus: 0,
+          playerRevenueMultiplier: 0.98,
+          aiRevenueMultiplier: 1.05,
+          playerMaintenanceDiscount: 0
+        }
+      };
+
+      const personas = [
+        { name: "JonathanIYT World", persona: "History preserver", cash: 34, ai: false, color: "#ffd477", weights: { thrill: 1.2, nostalgia: 1.45, capacity: 1.1, theme: 1.35, food: 1.0 }, risk: 1.0 },
+        { name: "Apex Amusements", persona: "Thrill chaser", cash: 34, ai: true, color: "#d75d58", weights: { thrill: 1.9, nostalgia: .65, capacity: 1.0, theme: 1.0, food: .35 }, risk: 1.16 },
+        { name: "Heritage Grove", persona: "Nostalgia keeper", cash: 34, ai: true, color: "#a987dd", weights: { thrill: .7, nostalgia: 2.0, capacity: .9, theme: 1.45, food: .7 }, risk: 1.03 },
+        { name: "Metro Parks Group", persona: "Capacity-minded corporate", cash: 34, ai: true, color: "#71b8db", weights: { thrill: .9, nostalgia: .7, capacity: 2.0, theme: 1.0, food: 1.25 }, risk: .95 }
+      ];
+
+      function freshPlayers() {
+        const setting = difficultySettings[state.difficulty] || difficultySettings.medium;
+        return personas.map((p, index) => ({
+          id: index,
+          name: p.name,
+          persona: p.persona,
+          cash: setting.startingCash,
+          legacy: 0,
+          cards: [],
+          ai: p.ai,
+          color: p.color,
+          weights: p.weights,
+          risk: p.ai ? p.risk * setting.aiRiskMultiplier : p.risk,
+          passed: false
+        }));
+      }
+
+      function cloneCard(card, index) {
+        return { ...card, stats: { ...card.stats }, uid: `${card.name.replace(/\W/g, "")}_${Date.now()}_${index}_${Math.random().toString(16).slice(2)}` };
+      }
+
+      function shuffle(arr) {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+      }
+
+      const music = createMusicEngine();
+
+      function createMusicEngine() {
+        let audioCtx = null;
+        let masterGain = null;
+        let timer = null;
+        let step = 0;
+        let muted = false;
+        const volume = 0.88;
+        const melody = [0, 4, 7, 11, 7, 4, 2, 7, 0, 5, 9, 12, 9, 5, 4, 7];
+
+        function start() {
+          if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            masterGain = audioCtx.createGain();
+            masterGain.gain.value = volume;
+            masterGain.connect(audioCtx.destination);
+          }
+
+          if (audioCtx.state === "suspended") audioCtx.resume();
+          muted = false;
+          masterGain.gain.value = volume;
+
+          if (!timer) {
+            timer = setInterval(tick, 245);
+            tick();
+          }
+        }
+
+        function tick() {
+          if (!audioCtx || muted) return;
+          const now = audioCtx.currentTime;
+          const base = state.phase === "event" ? 146.83 : 130.81;
+          const note = melody[step % melody.length];
+          const downbeat = step % 4 === 0;
+          playTone(base * Math.pow(2, note / 12), now, downbeat ? 0.32 : 0.24, downbeat ? 0.18 : 0.12, downbeat ? "triangle" : "sine");
+          if (step % 8 === 0) playTone(base / 2, now, 1.15, 0.06, "sine");
+          step++;
+        }
+
+        function playTone(freq, time, duration, level, type) {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = type;
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.0001, time);
+          gain.gain.exponentialRampToValueAtTime(level, time + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+          osc.connect(gain);
+          gain.connect(masterGain);
+          osc.start(time);
+          osc.stop(time + duration + 0.06);
+        }
+
+        function setMuted(value) {
+          muted = value;
+          if (masterGain) masterGain.gain.value = muted ? 0 : volume;
+        }
+
+        return { start, setMuted };
+      }
+
+      function initGame() {
+        music.start();
+        music.setMuted(false);
+        state.muted = false;
+        state.started = true;
+        state.season = 1;
+        state.lot = 1;
+        state.phase = "auction";
+        state.deck = shuffle(cardLibrary).map(cloneCard);
+        state.eventDeck = shuffle(eventLibrary);
+        state.players = freshPlayers();
+        state.usedAuctionCardNames = [];
+        state.log = [];
+        state.selectedCardId = null;
+        resultOverlay.style.display = "none";
+        eventOverlay.style.display = "none";
+        startScreen.style.display = "none";
+        difficultyScreen.style.display = "none";
+        addLog("The gates open for the first auction. Five seasons will decide who controls Coaster Capital.");
+        spawnSparkles();
+        startAuctionLot();
+        renderAll();
+      }
+
+      function startAuctionLot() {
+        if (state.lot > LOTS_PER_SEASON) {
+          startEventPhase();
+          return;
+        }
+        state.phase = "auction";
+        state.currentCard = drawNextUniqueAuctionCard();
+        if (!state.currentCard) {
+          startEventPhase();
+          return;
+        }
+        state.activeBidders = state.players.map(p => p.id).filter(id => state.players[id].cash > 0);
+        state.players.forEach(p => p.passed = false);
+        state.currentBid = Math.min(state.currentCard.min, Math.max(...state.activeBidders.map(id => state.players[id].cash)));
+        state.highestBidder = null;
+        state.currentTurn = 0;
+        addLog(`Season ${state.season}, Lot ${state.lot}: <strong>${state.currentCard.name}</strong> arrives on the table.`);
+        renderAll();
+        if (currentPlayer().ai) runAiUntilPlayer();
+      }
+
+      function drawNextUniqueAuctionCard() {
+        while (state.deck.length) {
+          const candidate = state.deck.shift();
+          if (!state.usedAuctionCardNames.includes(candidate.name)) {
+            state.usedAuctionCardNames.push(candidate.name);
+            return candidate;
+          }
+        }
+
+        const used = new Set(state.usedAuctionCardNames);
+        const unusedCards = cardLibrary.filter(card => !used.has(card.name));
+        if (!unusedCards.length) return null;
+
+        state.deck = shuffle(unusedCards).map(cloneCard);
+        const nextCard = state.deck.shift();
+        state.usedAuctionCardNames.push(nextCard.name);
+        return nextCard;
+      }
+
+      function currentPlayer() {
+        if (!state.activeBidders.length) return state.players[0];
+        return state.players[state.activeBidders[state.currentTurn % state.activeBidders.length]];
+      }
+
+      function playerBid(amount) {
+        if (state.phase !== "auction") return;
+        const p = state.players[0];
+        if (currentPlayer().id !== 0) return;
+        const target = Math.max(state.currentBid + amount, state.currentCard.min);
+        if (target > p.cash) {
+          addLog(`<strong>${p.name}</strong> cannot bid $${target}M with only $${p.cash}M left.`);
+          renderAll();
+          return;
+        }
+        placeBid(0, target);
+        advanceTurn();
+        renderAll();
+        runAiUntilPlayer();
+      }
+
+      function playerPass() {
+        if (state.phase !== "auction") return;
+        if (currentPlayer().id !== 0) return;
+        passBidder(0);
+        renderAll();
+        runAiUntilPlayer();
+      }
+
+      function placeBid(playerId, amount) {
+        const p = state.players[playerId];
+        state.currentBid = amount;
+        state.highestBidder = playerId;
+        p.passed = false;
+        addLog(`<strong>${p.name}</strong> bids $${amount}M.`);
+      }
+
+      function passBidder(playerId) {
+        const p = state.players[playerId];
+        p.passed = true;
+        state.activeBidders = state.activeBidders.filter(id => id !== playerId);
+        addLog(`<strong>${p.name}</strong> passes.`);
+        if (state.currentTurn >= state.activeBidders.length) state.currentTurn = 0;
+        checkAuctionEnd();
+      }
+
+      function advanceTurn() {
+        if (state.activeBidders.length <= 1) return;
+        state.currentTurn = (state.currentTurn + 1) % state.activeBidders.length;
+      }
+
+      function checkAuctionEnd() {
+        if (state.phase !== "auction") return false;
+        if (state.highestBidder !== null && state.activeBidders.length === 1 && state.activeBidders[0] === state.highestBidder) {
+          resolveAuction();
+          return true;
+        }
+        if (state.activeBidders.length === 0) {
+          state.highestBidder = null;
+          resolveAuction();
+          return true;
+        }
+        if (state.activeBidders.length === 1 && state.highestBidder === null) {
+          const only = state.activeBidders[0];
+          placeBid(only, Math.min(state.currentCard.min, state.players[only].cash));
+          resolveAuction();
+          return true;
+        }
+        return false;
+      }
+
+      function resolveAuction() {
+        if (state.phase !== "auction") return;
+        state.phase = "resolved";
+        if (state.highestBidder === null) {
+          addLog(`<strong>${state.currentCard.name}</strong> finds no buyer and stays abandoned for now.`);
+        } else {
+          const winner = state.players[state.highestBidder];
+          winner.cash -= state.currentBid;
+          winner.cards.push(state.currentCard);
+          addLog(`<strong>${winner.name}</strong> wins <strong>${state.currentCard.name}</strong> for $${state.currentBid}M.`);
+        }
+        nextBtn.style.display = "inline-block";
+        renderAll();
+      }
+
+      function nextLot() {
+        if (state.phase !== "resolved") return;
+        state.lot += 1;
+        nextBtn.style.display = "none";
+        startAuctionLot();
+      }
+
+      function runAiUntilPlayer() {
+        if (state.phase !== "auction") return;
+        let guard = 0;
+        while (state.phase === "auction" && currentPlayer().ai && guard < 20) {
+          const ai = currentPlayer();
+          const maxValue = aiValue(ai, state.currentCard);
+          const pressure = 1 + Math.random() * 1.8;
+          const nextBid = Math.max(state.currentBid + 1, state.currentCard.min);
+          const willing = nextBid <= ai.cash && nextBid <= Math.floor(maxValue * ai.risk + pressure);
+          if (willing) {
+            const jump = Math.random() < .22 && nextBid + 2 <= ai.cash && nextBid + 2 <= maxValue ? 2 : 0;
+            placeBid(ai.id, nextBid + jump);
+            advanceTurn();
+          } else {
+            passBidder(ai.id);
+          }
+          if (checkAuctionEnd()) break;
+          guard++;
+        }
+        renderAll();
+      }
+
+      function aiValue(ai, card) {
+        const s = card.stats;
+        let value = card.min +
+          s.thrill * ai.weights.thrill * .55 +
+          s.nostalgia * ai.weights.nostalgia * .5 +
+          s.capacity * ai.weights.capacity * .45 +
+          s.theme * ai.weights.theme * .42 +
+          s.food * ai.weights.food * .5 -
+          card.maint * .75;
+
+        if (ai.persona.includes("Thrill") && card.type === "coaster") value += 3.5;
+        if (ai.persona.includes("Nostalgia") && card.year < 1980) value += 3;
+        if (ai.persona.includes("Capacity") && s.capacity >= 8) value += 3;
+        if (card.type === "food" && ai.persona.includes("Capacity")) value += 1.5;
+        value += Math.random() * 2.5;
+        const setting = difficultySettings[state.difficulty] || difficultySettings.medium;
+        if (ai.ai) value += setting.aiValuePenalty;
+        return Math.max(1, value);
+      }
+
+      function startEventPhase() {
+        state.phase = "event";
+        state.currentEvent = state.eventDeck.shift() || shuffle(eventLibrary)[0];
+        state.selectedCardId = null;
+        eventOverlay.style.display = "grid";
+        seasonResults.innerHTML = "";
+        scoreBtn.disabled = true;
+        addLog(`Season ${state.season} event revealed: <strong>${state.currentEvent.name}</strong>.`);
+        renderEventPanel();
+        renderAll();
+      }
+
+      function renderEventPanel() {
+        const e = state.currentEvent;
+        eventCardBig.innerHTML = `
+          <div class="eventType">${e.type}</div>
+          <h2>${e.name}</h2>
+          <p>${e.text}</p>
+          <div style="margin-top:18px;font-size:13px;line-height:1.45;">
+            <strong>Scoring focus:</strong><br>
+            ${Object.entries(e.weights).filter(([,v]) => v > 0).map(([k,v]) => `${statNames[k]} ×${v}`).join(" · ")}
+          </div>
+        `;
+
+        scoreChoices.innerHTML = "";
+        const player = state.players[0];
+        if (!player.cards.length) {
+          scoreChoices.innerHTML = `<p style="color:#d8c99f;">You have no attractions yet. This season will hurt, but the midway is not finished.</p>`;
+          scoreBtn.disabled = false;
+          state.selectedCardId = null;
+          return;
+        }
+
+        player.cards.forEach(card => {
+          const el = makeCard(card, { small: false, playable: true });
+          el.addEventListener("click", () => {
+            state.selectedCardId = card.uid;
+            document.querySelectorAll("#scoreChoices .card").forEach(c => c.classList.remove("selected"));
+            el.classList.add("selected");
+            scoreBtn.disabled = false;
+            const projected = scoreCard(card, state.currentEvent);
+            boardHint.textContent = `${card.name} projects ${projected.revenue} featured revenue. Food, capacity, and upgrades can still add park support.`;
+          });
+          scoreChoices.appendChild(el);
+        });
+      }
+
+      function finishSeasonScoring() {
+        if (state.phase !== "event") return;
+        const event = state.currentEvent;
+        const lines = [];
+        state.players.forEach(player => {
+          const chosen = chooseBestCard(player, event, player.id === 0 ? state.selectedCardId : null);
+          const setting = difficultySettings[state.difficulty] || difficultySettings.medium;
+          const baseGross = chosen ? scoreCard(chosen, event).revenue : 0;
+          const gross = Math.round(baseGross * (player.ai ? setting.aiRevenueMultiplier : setting.playerRevenueMultiplier));
+          const rawMaintenance = player.cards.reduce((sum, c) => sum + c.maint, 0);
+          const maintenance = Math.max(0, rawMaintenance - (player.ai ? 0 : setting.playerMaintenanceDiscount));
+          const setBonus = themedSetBonus(player.cards);
+          const supportBonus = parkSupportBonus(player.cards, event);
+          const net = Math.max(0, gross + setBonus + supportBonus - maintenance);
+          player.cash += net;
+          player.legacy += Math.floor(gross / 2) + setBonus + Math.floor(supportBonus / 2);
+          lines.push(`<strong>${player.name}</strong> featured ${chosen ? chosen.name : "nothing"}: $${gross}M gross + ${setBonus} set bonus + ${supportBonus} park support - $${maintenance}M upkeep = <strong>$${net}M</strong>.`);
+        });
+        seasonResults.innerHTML = lines.map(line => `<div class="logLine">${line}</div>`).join("");
+        addLog(`Season ${state.season} closes. Revenue is counted and maintenance is paid.`);
+        state.phase = "seasonEnd";
+        scoreBtn.textContent = state.season >= MAX_SEASONS ? "Show Final Results" : "Start Next Season";
+        scoreBtn.disabled = false;
+        scoreBtn.onclick = continueAfterSeason;
+        renderAll();
+      }
+
+      function continueAfterSeason() {
+        eventOverlay.style.display = "none";
+        scoreBtn.textContent = "Feature Selected Attraction";
+        scoreBtn.onclick = finishSeasonScoring;
+        if (state.season >= MAX_SEASONS) {
+          finishGame();
+          return;
+        }
+        state.season += 1;
+        state.lot = 1;
+        addLog(`Season ${state.season} begins. Fresh lots arrive before opening weekend.`);
+        startAuctionLot();
+        renderAll();
+      }
+
+      function chooseBestCard(player, event, forcedUid) {
+        if (!player.cards.length) return null;
+        if (forcedUid) return player.cards.find(c => c.uid === forcedUid) || player.cards[0];
+        let best = player.cards[0];
+        let bestScore = -Infinity;
+        for (const card of player.cards) {
+          const score = scoreCard(card, event).revenue;
+          if (score > bestScore) {
+            best = card;
+            bestScore = score;
+          }
+        }
+        return best;
+      }
+
+      function scoreCard(card, event) {
+        let total = 0;
+        for (const [stat, weight] of Object.entries(event.weights)) {
+          total += (card.stats[stat] || 0) * weight;
+        }
+        if (event.bonuses && event.bonuses[card.type]) total += event.bonuses[card.type];
+        if (event.penalty && event.penalty[card.type]) total += event.penalty[card.type];
+        if (card.year < 1975 && event.name.includes("Heritage")) total += 5;
+        if (card.rarity === "Landmark") total += 3;
+        return { revenue: Math.max(0, Math.round(total)) };
+      }
+
+      function themedSetBonus(cards) {
+        const counts = cards.reduce((acc, c) => {
+          acc[c.type] = (acc[c.type] || 0) + 1;
+          return acc;
+        }, {});
+        let bonus = 0;
+        for (const count of Object.values(counts)) {
+          if (count >= 2) bonus += 2;
+          if (count >= 4) bonus += 3;
+        }
+        return bonus;
+      }
+
+      function parkSupportBonus(cards, event) {
+        if (!cards.length) return 0;
+        const foodSupport = cards.reduce((sum, c) => sum + (c.stats.food || 0), 0);
+        const capacitySupport = cards.reduce((sum, c) => sum + (c.stats.capacity || 0), 0);
+        const upgradeSupport = cards.filter(c => c.type === "upgrade").reduce((sum, c) => sum + (c.stats.capacity || 0) + (c.stats.theme || 0), 0);
+        let bonus = Math.floor(foodSupport / 5) + Math.floor(capacitySupport / 14) + Math.floor(upgradeSupport / 12);
+
+        if (event.name.includes("Food")) bonus += Math.floor(foodSupport / 3);
+        if (event.name.includes("Opening") || event.name.includes("Vacation")) bonus += Math.floor(capacitySupport / 10);
+        if (event.name.includes("Heat") || event.name.includes("Rainy")) bonus += cards.some(c => c.type === "food") ? 2 : 0;
+
+        return Math.min(14, bonus);
+      }
+
+      function finishGame() {
+        state.phase = "ended";
+        eventOverlay.style.display = "none";
+        resultOverlay.style.display = "grid";
+        const rows = state.players.map(p => ({
+          ...p,
+          finalScore: p.legacy + p.cash + p.cards.length * 2
+        })).sort((a, b) => b.finalScore - a.finalScore);
+        const winner = rows[0];
+        finalStory.textContent = winner.id === 0
+          ? "Your park wins the season. The skyline belongs to you, the ticket counters are full, and Coaster Capital becomes the name every rival has to chase."
+          : `${winner.name} takes the season crown, but your midway still has lights worth saving.`;
+        if (winner.id === 0) launchWinConfetti();
+        else clearWinConfetti();
+
+        ranking.innerHTML = rows.map((p, i) => `
+          <div class="rankRow">
+            <div class="rankNum">#${i + 1}</div>
+            <div>
+              <div class="rankName">${p.name}</div>
+              <div class="rankDetail">${p.persona} · $${p.cash}M cash · ${p.legacy} legacy · ${p.cards.length} attractions</div>
+            </div>
+            <div class="rankScore">${p.finalScore}</div>
+          </div>
+        `).join("");
+        renderAll();
+      }
+
+      function clearWinConfetti() {
+        const confetti = $("winConfetti");
+        if (confetti) confetti.innerHTML = "";
+      }
+
+      function launchWinConfetti() {
+        const confetti = $("winConfetti");
+        if (!confetti) return;
+        confetti.innerHTML = "";
+        const colors = ["#ffd477", "#73c783", "#71b8db", "#d75d58", "#a987dd", "#fff0c8"];
+        for (let i = 0; i < 120; i++) {
+          const piece = document.createElement("div");
+          piece.className = "confettiPiece";
+          piece.style.left = `${Math.random() * 100}%`;
+          piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+          piece.style.animationDelay = `${Math.random() * 1.4}s`;
+          piece.style.animationDuration = `${2.4 + Math.random() * 2.2}s`;
+          piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+          confetti.appendChild(piece);
+        }
+      }
+
+      function renderAll() {
+        renderSeasonTrack();
+        renderHud();
+        renderPlayers();
+        renderAuctionCard();
+        renderPlayerBoard();
+        renderLog();
+        updateButtons();
+      }
+
+      function renderHud() {
+        phaseText.textContent = `${state.phaseLabel || phaseLabel()} · ${difficultySettings[state.difficulty].label} · Season ${state.season}/${MAX_SEASONS} · Lot ${Math.min(state.lot, LOTS_PER_SEASON)}/${LOTS_PER_SEASON}`;
+        if (state.phase === "auction") {
+          objectiveTitle.textContent = "Auction Phase";
+          const turn = currentPlayer();
+          objectiveText.textContent = turn.id === 0
+            ? "Your turn. Raise the bid or pass before the rivals take the lot."
+            : `${turn.name} is deciding whether the attraction is worth another bid.`;
+        } else if (state.phase === "resolved") {
+          objectiveTitle.textContent = "Lot Resolved";
+          objectiveText.textContent = "Advance to the next auction lot.";
+        } else if (state.phase === "event") {
+          objectiveTitle.textContent = "Opening Weekend";
+          objectiveText.textContent = "Pick the attraction that best matches the event card.";
+        } else if (state.phase === "seasonEnd") {
+          objectiveTitle.textContent = "Season Results";
+          objectiveText.textContent = "Review revenue, maintenance, and legacy before continuing.";
+        } else {
+          objectiveTitle.textContent = "Final Score";
+          objectiveText.textContent = "The strongest park legacy wins.";
+        }
+      }
+
+      function phaseLabel() {
+        const labels = { start: "Start", auction: "Auction", resolved: "Auction Resolved", event: "Event", seasonEnd: "Season End", ended: "Game Over" };
+        return labels[state.phase] || state.phase;
+      }
+
+      function renderSeasonTrack() {
+        seasonTrack.innerHTML = "";
+        for (let i = 1; i <= MAX_SEASONS; i++) {
+          const dot = document.createElement("div");
+          dot.className = "seasonDot" + (i === state.season ? " active" : i < state.season ? " done" : "");
+          seasonTrack.appendChild(dot);
+        }
+      }
+
+      function renderPlayers() {
+        opponentsEl.innerHTML = "";
+        state.players.forEach(p => {
+          const panel = document.createElement("div");
+          panel.className = "parkPanel" + (p.id === 0 ? " playerPark" : "");
+          const isTurn = state.phase === "auction" && currentPlayer().id === p.id;
+          panel.innerHTML = `
+            ${isTurn ? '<div class="turnGlow"></div>' : ''}
+            <div class="parkName" style="color:${p.color};">${p.name}</div>
+            <div class="parkPersona">${p.persona}</div>
+            <div class="parkStats">
+              <span class="statChip">$${p.cash}M</span>
+              <span class="statChip">Legacy ${p.legacy}</span>
+              <span class="statChip">${p.cards.length} cards</span>
+            </div>
+          `;
+          opponentsEl.appendChild(panel);
+        });
+      }
+
+      function renderAuctionCard() {
+        auctionCardZone.innerHTML = "";
+        if (!state.currentCard) {
+          auctionCardZone.appendChild(makeBackCard("MIDWAY\nDECK"));
+          return;
+        }
+        const el = makeCard(state.currentCard, { auction: true });
+        auctionCardZone.appendChild(el);
+
+        auctionTitle.textContent = state.phase === "resolved" ? "Lot Sold" : "Auction Lot";
+        auctionText.innerHTML = state.currentCard
+          ? `<strong>${state.currentCard.name}</strong> is up for bid. Minimum value is $${state.currentCard.min}M. Maintenance is $${state.currentCard.maint}M each season.`
+          : "The next attraction waits in the deck.";
+        const leader = state.highestBidder === null ? "No leader" : state.players[state.highestBidder].name;
+        bidDisplay.textContent = `Current bid: $${state.currentBid}M · Leader: ${leader}`;
+      }
+
+      function renderPlayerBoard() {
+        const player = state.players[0];
+        parkCardsEl.innerHTML = "";
+        if (!player.cards.length) {
+          parkCardsEl.innerHTML = `<div style="color:#cabb93;padding:24px 8px;">No attractions yet. Win an auction to start rebuilding the park.</div>`;
+        } else {
+          player.cards.forEach(card => parkCardsEl.appendChild(makeCard(card, { small: true })));
+        }
+        boardHint.textContent = state.phase === "event" ? "Choose a card during the event." : "Collected attractions appear here.";
+      }
+
+      function renderLog() {
+        logEl.innerHTML = state.log.slice(-18).map(line => `<div class="logLine">${line}</div>`).join("");
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+
+      function updateButtons() {
+        const isPlayerTurn = state.phase === "auction" && currentPlayer().id === 0;
+        bid1Btn.disabled = !isPlayerTurn || state.currentBid + 1 > state.players[0].cash;
+        bid3Btn.disabled = !isPlayerTurn || state.currentBid + 3 > state.players[0].cash;
+        passBtn.disabled = !isPlayerTurn;
+        nextBtn.style.display = state.phase === "resolved" ? "inline-block" : "none";
+      }
+
+      function addLog(line) {
+        state.log.push(line);
+        if (state.log.length > 80) state.log.shift();
+      }
+
+      function makeBackCard(text) {
+        const card = document.createElement("div");
+        card.className = "card backCard";
+        card.innerHTML = `<div class="cardInner">${text.replace(/\n/g, "<br>")}</div>`;
+        return card;
+      }
+
+      function makeCard(card, options = {}) {
+        const el = document.createElement("div");
+        el.className = `card ${card.type} ${options.auction ? "auctionCard" : ""} ${options.playable ? "playable" : ""}`;
+        el.dataset.uid = card.uid;
+        el.innerHTML = `
+          <div class="cardInner">
+            <div class="cardTop"><span>${card.rarity}</span><span>${card.year}</span></div>
+            <div class="cardArt">${artFor(card)}</div>
+            <div class="cardName">${card.name}</div>
+            <div class="cardFlavor">${card.flavor}</div>
+            <div class="statGrid">
+              <div class="miniStat">Thr ${card.stats.thrill}</div>
+              <div class="miniStat">Nos ${card.stats.nostalgia}</div>
+              <div class="miniStat">Cap ${card.stats.capacity}</div>
+              <div class="miniStat">Theme ${card.stats.theme}</div>
+              <div class="miniStat">Food ${card.stats.food}</div>
+              <div class="miniStat">Maint ${card.maint}</div>
+            </div>
+            <div class="cardBottom"><span>${labelForType(card.type)}</span><span>$${card.min}M+</span></div>
+          </div>
+        `;
+        return el;
+      }
+
+      function labelForType(type) {
+        return {
+          coaster: "Coaster",
+          dark: "Dark Ride",
+          water: "Water",
+          family: "Family",
+          food: "Food",
+          upgrade: "Upgrade"
+        }[type] || type;
+      }
+
+      function artFor(card) {
+        if (card.type === "coaster") {
+          return `<svg viewBox="0 0 160 78" aria-hidden="true"><path d="M4 62 C36 12, 68 12, 96 62 S138 75,156 34" fill="none" stroke="rgba(255,242,190,.9)" stroke-width="5"/><path d="M12 66 L154 66" stroke="rgba(40,24,26,.55)" stroke-width="5"/><g fill="rgba(40,24,26,.62)"><rect x="28" y="44" width="6" height="22"/><rect x="58" y="28" width="6" height="38"/><rect x="90" y="46" width="6" height="20"/><rect x="124" y="58" width="6" height="8"/></g><circle cx="104" cy="47" r="9" fill="rgba(255,213,120,.85)"/></svg>`;
+        }
+        if (card.type === "dark") {
+          return `<svg viewBox="0 0 160 78" aria-hidden="true"><rect x="18" y="28" width="124" height="42" rx="8" fill="rgba(24,18,36,.68)"/><path d="M28 28 Q80 2 132 28" fill="rgba(255,233,170,.75)"/><circle cx="56" cy="49" r="7" fill="rgba(255,236,180,.88)"/><circle cx="104" cy="49" r="7" fill="rgba(255,236,180,.88)"/><path d="M48 67 Q80 42 112 67" stroke="rgba(255,236,180,.7)" stroke-width="4" fill="none"/></svg>`;
+        }
+        if (card.type === "water") {
+          return `<svg viewBox="0 0 160 78" aria-hidden="true"><path d="M12 56 C34 44,46 68,68 56 S104 44,126 56 S146 62,156 52" stroke="rgba(221,249,255,.95)" stroke-width="7" fill="none"/><path d="M44 22 L84 64 L124 22" fill="rgba(37,78,95,.55)" stroke="rgba(255,242,190,.7)" stroke-width="4"/><circle cx="92" cy="50" r="10" fill="rgba(255,213,120,.85)"/></svg>`;
+        }
+        if (card.type === "family") {
+          return `<svg viewBox="0 0 160 78" aria-hidden="true"><circle cx="80" cy="40" r="28" fill="none" stroke="rgba(255,242,190,.92)" stroke-width="5"/><g stroke="rgba(35,43,38,.58)" stroke-width="4"><line x1="80" y1="12" x2="80" y2="68"/><line x1="52" y1="40" x2="108" y2="40"/><line x1="60" y1="20" x2="100" y2="60"/><line x1="100" y1="20" x2="60" y2="60"/></g><rect x="70" y="58" width="20" height="12" rx="3" fill="rgba(255,213,120,.85)"/></svg>`;
+        }
+        if (card.type === "food") {
+          return `<svg viewBox="0 0 160 78" aria-hidden="true"><rect x="34" y="28" width="92" height="38" rx="7" fill="rgba(91,49,28,.62)"/><path d="M28 28 H132 L118 12 H42 Z" fill="rgba(255,242,190,.86)"/><g fill="rgba(211,83,65,.8)"><rect x="42" y="12" width="12" height="16"/><rect x="66" y="12" width="12" height="16"/><rect x="90" y="12" width="12" height="16"/><rect x="114" y="12" width="12" height="16"/></g><circle cx="80" cy="48" r="12" fill="rgba(255,213,120,.85)"/></svg>`;
+        }
+        return `<svg viewBox="0 0 160 78" aria-hidden="true"><rect x="28" y="20" width="104" height="38" rx="8" fill="rgba(42,49,73,.62)"/><path d="M42 58 L58 26 L74 58 L90 26 L106 58 L122 26" fill="none" stroke="rgba(255,242,190,.88)" stroke-width="5"/><circle cx="80" cy="39" r="10" fill="rgba(255,213,120,.85)"/></svg>`;
+      }
+
+      function spawnSparkles() {
+        const table = $("table");
+        table.querySelectorAll(".sparkle").forEach(s => s.remove());
+        for (let i = 0; i < 28; i++) {
+          const s = document.createElement("div");
+          s.className = "sparkle";
+          s.style.left = `${5 + Math.random() * 90}%`;
+          s.style.top = `${45 + Math.random() * 45}%`;
+          s.style.animationDelay = `${Math.random() * 5}s`;
+          s.style.animationDuration = `${4 + Math.random() * 4}s`;
+          table.appendChild(s);
+        }
+      }
+
+      bid1Btn.addEventListener("click", () => playerBid(1));
+      bid3Btn.addEventListener("click", () => playerBid(3));
+      passBtn.addEventListener("click", playerPass);
+      nextBtn.addEventListener("click", nextLot);
+      scoreBtn.addEventListener("click", finishSeasonScoring);
+      startBtn.addEventListener("click", () => {
+        music.start();
+        music.setMuted(false);
+        state.muted = false;
+        startScreen.style.display = "none";
+        difficultyScreen.style.display = "grid";
+      });
+      backToStartBtn.addEventListener("click", () => {
+        difficultyScreen.style.display = "none";
+        startScreen.style.display = "grid";
+      });
+      document.querySelectorAll(".difficultyBtn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.difficulty = btn.dataset.difficulty || "medium";
+          initGame();
+        });
+      });
+      restartBtn.addEventListener("click", initGame);
+      musicBtn.addEventListener("click", () => {
+        state.muted = !state.muted;
+        music.setMuted(state.muted);
+        renderAll();
+      });
+      window.addEventListener("keydown", (e) => {
+        if (e.key.toLowerCase() === "m") {
+          state.muted = !state.muted;
+          music.setMuted(state.muted);
+          musicBtn.textContent = `Music: ${state.muted ? "Off" : "On"}`;
+          renderAll();
+        }
+      });
+
+      state.players = freshPlayers();
+      state.currentCard = null;
+      renderSeasonTrack();
+      renderPlayers();
+      renderAuctionCard();
+      renderPlayerBoard();
+      renderLog();
+    })();
+  </script>
+</body>
+</html>
