@@ -100,3 +100,6 @@ Coaster Capital was created as a fun theme park strategy game for coaster fans, 
 - JavaScript
 
 No external libraries or downloads are required.
+
+SUBSCRIBE 
+https://www.youtube.com/@JonathanIYT
