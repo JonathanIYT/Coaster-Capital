@@ -1162,20 +1162,56 @@
         if (currentPlayer().ai) runAiUntilPlayer();
       }
 
+      function legendCardsAreEligible() {
+        return state.season >= 2 && state.season <= MAX_SEASONS;
+      }
+
+      function canAuctionCardAppear(card) {
+        if (!card.legend) return true;
+        return legendCardsAreEligible();
+      }
+
       function drawNextUniqueAuctionCard() {
-        while (state.deck.length) {
-          const candidate = state.deck.shift();
-          if (!state.usedAuctionCardNames.includes(candidate.name)) {
-            state.usedAuctionCardNames.push(candidate.name);
-            return candidate;
-          }
+        const used = new Set(state.usedAuctionCardNames);
+        const unusedLegendCards = cardLibrary.filter(card => card.legend && !used.has(card.name));
+        const legendRollHits = legendCardsAreEligible() && unusedLegendCards.length > 0 && Math.random() < 0.20;
+
+        if (legendRollHits) {
+          const legendCard = shuffle(unusedLegendCards)[0];
+          state.deck = state.deck.filter(card => card.name !== legendCard.name);
+          state.usedAuctionCardNames.push(legendCard.name);
+          return cloneCard(legendCard, state.usedAuctionCardNames.length);
         }
 
-        const used = new Set(state.usedAuctionCardNames);
-        const unusedCards = cardLibrary.filter(card => !used.has(card.name));
-        if (!unusedCards.length) return null;
+        const skippedCards = [];
 
-        state.deck = shuffle(unusedCards).map(cloneCard);
+        while (state.deck.length) {
+          const candidate = state.deck.shift();
+          if (state.usedAuctionCardNames.includes(candidate.name)) continue;
+
+          if (!canAuctionCardAppear(candidate) || candidate.legend) {
+            skippedCards.push(candidate);
+            continue;
+          }
+
+          state.deck.push(...skippedCards);
+          state.usedAuctionCardNames.push(candidate.name);
+          return candidate;
+        }
+
+        state.deck.push(...skippedCards);
+
+        const unusedNormalCards = cardLibrary.filter(card => !card.legend && !used.has(card.name));
+        if (!unusedNormalCards.length) {
+          if (legendCardsAreEligible() && unusedLegendCards.length) {
+            const fallbackLegend = shuffle(unusedLegendCards)[0];
+            state.usedAuctionCardNames.push(fallbackLegend.name);
+            return cloneCard(fallbackLegend, state.usedAuctionCardNames.length);
+          }
+          return null;
+        }
+
+        state.deck = shuffle(unusedNormalCards).map(cloneCard);
         const nextCard = state.deck.shift();
         state.usedAuctionCardNames.push(nextCard.name);
         return nextCard;
