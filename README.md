@@ -75,15 +75,16 @@ Coaster Capital is a single-file browser game. You do not need to install anythi
 
 To play it:
 
-1. Download or copy the game file.
-2. Make sure the file is named:
+1. CLick the green "Code" Button in the top right.
+2. Download the zipped file.
+3. Find the file named:
 
    `index.html`
 
-3. Open the file on your computer.
-4. Double-click `index.html`.
-5. The game should open in your default web browser.
-6. Press **Start Game**, choose a difficulty, and begin playing.
+4. Open the file on your computer.
+5. Double-click `index.html`.
+6. The game should open in your default web browser.
+7. Press **Start Game**, choose a difficulty, and begin playing.
 
 If double-clicking does not work, right-click the file and choose **Open with**, then select a browser like Chrome, Edge, Firefox, or Safari.
 
