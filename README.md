@@ -75,7 +75,7 @@ Coaster Capital is a single-file browser game. You do not need to install anythi
 
 To play it:
 
-1. CLick the green "Code" Button in the top right.
+1. Click the green "Code" Button in the top right.
 2. Download the zipped file.
 3. Find the file named:
 
